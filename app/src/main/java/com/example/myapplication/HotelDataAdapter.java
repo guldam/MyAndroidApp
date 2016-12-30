@@ -1,16 +1,12 @@
 package com.example.myapplication;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Button;
 
 import java.util.ArrayList;
-import java.io.ByteArrayOutputStream;
 
 /**
  * Created by q on 2016-12-28.
@@ -18,13 +14,18 @@ import java.io.ByteArrayOutputStream;
 
 public class HotelDataAdapter extends BaseAdapter {
 
-
     ArrayList<HotelData> datas;
     LayoutInflater inflater;
 
     public HotelDataAdapter(LayoutInflater inflater, ArrayList<HotelData> datas){
+
         this.datas = datas;
         this.inflater = inflater;
+
+
+
+
+
     }
 
     @Override
@@ -46,26 +47,14 @@ public class HotelDataAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if( convertView == null){
             convertView = inflater.inflate(R.layout.list_layout,null);
+
         }
+        TextView text_name = (TextView)convertView.findViewById(R.id.text_name);
+        TextView text_number = (TextView)convertView.findViewById(R.id.text_number);
 
-    TextView text_name = (TextView)convertView.findViewById(R.id.text_name);
-    TextView text_number = (TextView)convertView.findViewById(R.id.text_number);
-    Button call = (Button)convertView.findViewById(R.id.button);
-
-    text_name.setText(datas.get(position).getName());
-    text_number.setText(datas.get(position).getNumber());
-
-    call.setOnClickListener(new View.OnClickListener() {
-        public void onClick(View v) {
-            Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(text_number));
-            startActivity(myIntent);
-        }
-    });
-            }
-
+        text_name.setText(datas.get(position).getName());
+        text_number.setText(datas.get(position).getNumber());
 
         return convertView;
     }
-
-
-
+}
