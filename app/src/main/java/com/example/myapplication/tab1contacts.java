@@ -1,5 +1,20 @@
 package com.example.myapplication;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,6 +31,19 @@ import android.content.res.AssetManager;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import android.provider.ContactsContract;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.widget.AdapterView;
+
+import android.database.Cursor;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
+
+import static android.os.Build.ID;
 
 
 /**
@@ -28,9 +56,60 @@ public class tab1contacts extends Fragment{
     ArrayList<HotelData> datas= new ArrayList<HotelData>();
     ListView listview;
 
+   /* public class Contact{
+        String PhotoId;
+        String name;
+        String PhoneNum;
+
+        public Contact(){}
+
+        public void setPhotoId(String PhotoId){
+            this.PhotoId=PhotoId;
+        }
+    }*/
+
+    /*public class Android_contact{
+        public String android_contact_Name = "";
+        public String android_contact_TelefonNr="";
+        public int android_contact_ID=0 ;
+    }
+
+    public ArrayList fp_get_Android_Contacts() {
+        ArrayList<Android_Contact> arrayList_Android_Contacts = new ArrayList<Android_Contact>();
+
+        Cursor cursor_Android_Contacts = null;
+        Cursor phoneCursor = null;
+        ContentResolver contentResolver = getContext().getContentResolver();
+        try {
+            cursor_Android_Contacts = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+            phoneCursor = contentResolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " =?"
+                    , new String[]{contact_id}
+                    , null);
+        } catch (Exception ex) {
+            Log.e("Error on contact", ex.getMessage());
+        }
+        if (cursor_Android_Contacts.getCount() > 0 && phoneCursor.getCount()>0 ) {
+            while (cursor_Android_Contacts.moveToNext()) {
+                String contact_id = cursor_Android_Contacts.getString(cursor_Android_Contacts.getColumnIndex(ContactsContract.Contacts._ID));
+                String contact_display_name = cursor_Android_Contacts.getString(cursor_Android_Contacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+
+                android_contact.android_contact_Name = contact_display_name;
+
+                int hasPhoneNumber = Integer.parseInt(cursor_Android_Contacts.getString(cursor_Android_Contacts.getColumnIndex(ContactsContract.Contracts.HAS_PHONE_NUMBER)));
+
+                arrayList_Android_Contacts.add(android_contact);
+            }
+        }
+        return arrayList_Android_Contacts;
+    }*/
+
+
 
     // JSONObject hotel = new JSONObject(json);
-
 
     public String loadJSONFromAsset() {
         String json = null;
@@ -50,10 +129,6 @@ public class tab1contacts extends Fragment{
     }
 
     void doJSONParser()  {
-
-   /*    / String st2 =
-                "[{ 'name' : 'hotel' , 'number' : '123123' },"+
-                        "{'name' : 'hotel', 'number' : '123123' }]";*/
         try {
             JSONArray obj = new JSONArray( loadJSONFromAsset() );
            /* String str = obj.toString();*/
@@ -83,7 +158,7 @@ public class tab1contacts extends Fragment{
 
 
         // data procesing ////
-       doJSONParser();
+        doJSONParser();
 
         listview = (ListView) rootView.findViewById(R.id.list);
 
@@ -96,7 +171,7 @@ public class tab1contacts extends Fragment{
 //
 //        ListView list = (ListView) rootView.findViewById(R.id.list);
 //        list.setAdapter(Adapter);
-        HotelDataAdapter adapter = new HotelDataAdapter( getLayoutInflater(null) , datas);
+        HotelDataAdapter adapter = new HotelDataAdapter( getLayoutInflater(null) , datas );
         listview.setAdapter(adapter);
         return rootView;
     }
