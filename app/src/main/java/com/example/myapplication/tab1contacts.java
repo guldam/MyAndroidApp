@@ -1,5 +1,4 @@
 package com.example.myapplication;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -14,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,14 +34,11 @@ import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.widget.AdapterView;
-
 import android.database.Cursor;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-
 import static android.os.Build.ID;
 import static com.example.myapplication.R.id.list;
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -239,8 +234,8 @@ public class tab1contacts extends Fragment{
 //
 //        ListView list = (ListView) rootView.findViewById(R.id.list);
 //        list.setAdapter(Adapter);
-        /*HotelDataAdapter adapter = new HotelDataAdapter( getLayoutInflater(null) , datas );*/
-        PhoneNumberAdapter adapter = new PhoneNumberAdapter (getLayoutInflater(null), getAddr());
+        HotelDataAdapter adapter = new HotelDataAdapter( getLayoutInflater(null) , datas );
+        /*PhoneNumberAdapter adapter = new PhoneNumberAdapter (getLayoutInflater(null), getAddr());*/
 
         listview.setAdapter(adapter);
         return rootView;
