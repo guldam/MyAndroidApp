@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import java.io.InputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -44,6 +45,8 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 
 import static android.os.Build.ID;
+import static com.example.myapplication.R.id.list;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 /**
@@ -56,7 +59,7 @@ public class tab1contacts extends Fragment{
     ArrayList<HotelData> datas= new ArrayList<HotelData>();
     ListView listview;
 
-   /* public class Contact{
+    /*public class Contact{
         String PhotoId;
         String name;
         String PhoneNum;
@@ -66,9 +69,9 @@ public class tab1contacts extends Fragment{
         public void setPhotoId(String PhotoId){
             this.PhotoId=PhotoId;
         }
-    }*/
+    }
 
-    /*public class Android_contact{
+    public class Android_Contact{
         public String android_contact_Name = "";
         public String android_contact_TelefonNr="";
         public int android_contact_ID=0 ;
@@ -111,10 +114,75 @@ public class tab1contacts extends Fragment{
 
     // JSONObject hotel = new JSONObject(json);
 
+
+    public class AddrBean{
+        String name;
+        String number;
+        public void setName(String name){
+            this.name = name;
+        }
+        public void setNumber(String number){
+            this.number = number;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getNumber() {
+            return number;
+        }
+    }
+
+
+    public ArrayList getAddr(){
+        Cursor cursor = null;
+        ArrayList list = null;
+        AddrBean bean = null;
+        try {
+            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+            String phoneName = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
+            String [] ad = new String[] {
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER
+            };
+            cursor = getContext().getContentResolver().query(uri, ad, null, null, phoneName);
+            cursor.moveToFirst();
+            while(cursor.moveToNext())
+            {if(cursor.getString(1) !=null)
+            {
+                if(list.size()==0)
+                {
+                    bean = new AddrBean();
+                    bean.setName(cursor.getString(0));
+                    bean.setNumber(cursor.getString(1));
+                    list.add(bean);
+                }
+                else{
+                    if( list.size() != cursor.getCount())
+                    {
+                        bean = new AddrBean();
+                        bean.setName(cursor.getString(0));
+                        bean.setNumber(cursor.getString(1));
+                        list.add(bean);
+                    }
+                }
+            }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }finally{
+            if(cursor != null){
+                cursor.close();
+                cursor = null;
+            }
+        }
+    return list;
+    }
+
     public String loadJSONFromAsset() {
         String json = null;
         try {
-
             InputStream is = getActivity().getAssets().open("hotel.json");
             int size = is.available();
             byte[] buffer = new byte[size];
@@ -160,7 +228,7 @@ public class tab1contacts extends Fragment{
         // data procesing ////
         doJSONParser();
 
-        listview = (ListView) rootView.findViewById(R.id.list);
+        listview = (ListView) rootView.findViewById(list);
 
 //        ArrayList<String> arGeneral = new ArrayList<String>();
 //        arGeneral.add("abc");
@@ -171,7 +239,9 @@ public class tab1contacts extends Fragment{
 //
 //        ListView list = (ListView) rootView.findViewById(R.id.list);
 //        list.setAdapter(Adapter);
-        HotelDataAdapter adapter = new HotelDataAdapter( getLayoutInflater(null) , datas );
+        /*HotelDataAdapter adapter = new HotelDataAdapter( getLayoutInflater(null) , datas );*/
+        PhoneNumberAdapter adapter = new PhoneNumberAdapter (getLayoutInflater(null), getAddr());
+
         listview.setAdapter(adapter);
         return rootView;
     }
