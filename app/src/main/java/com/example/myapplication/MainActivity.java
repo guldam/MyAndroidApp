@@ -17,16 +17,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.GraphRequestBatch;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -66,9 +70,18 @@ public class MainActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+
                 GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
+                        String name = object.optString("name");
+                        String id =object.optString("id");
+                        String link = object.optString("link");
+
+                        Log.d("Name",name);
+                        Log.d("id",id);
+                        Log.d("link",link);
+
                         Log.v("result",object.toString());
                     }
                 });
@@ -77,14 +90,51 @@ public class MainActivity extends AppCompatActivity {
                 parameters.putString("fields", "id,name,email,gender,birthday");
                 graphRequest.setParameters(parameters);
                 graphRequest.executeAsync();
+
+                GraphRequestBatch batch = new GraphRequestBatch(
+                        GraphRequest.newMeRequest(
+                                AccessToken.getCurrentAccessToken(),
+                                new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(
+                                            JSONObject jsonObject,
+                                            GraphResponse response) {
+                                        // Application code for user
+                                    }
+                                }),
+                        GraphRequest.newMyFriendsRequest(
+                                AccessToken.getCurrentAccessToken(),
+                                new GraphRequest.GraphJSONArrayCallback() {
+                                    @Override
+                                    public void onCompleted(
+                                            JSONArray jsonArray,
+                                            GraphResponse response) {
+                                        JSONObject object = response.getJSONObject();
+                                        JSONObject summary = object.optJSONObject("summary");
+                                        Log.d("summary",summary.optString("total_count"));
+                                        JSONArray listFriends = object.optJSONArray("data");
+                                        Log.d("ListFriends", listFriends.length()+"");
+
+                                    }
+                                })
+                );
+                batch.addCallback(new GraphRequestBatch.Callback() {
+                    @Override
+                    public void onBatchCompleted(GraphRequestBatch graphRequests) {
+                        // Application code for when the batch finishes
+                    }
+                });
+                batch.executeAsync();
             }
 
             @Override
             public void onCancel() {
+
             }
 
             @Override
             public void onError(FacebookException error) {
+
                 Log.e("LoginErr",error.toString());
             }
         });
